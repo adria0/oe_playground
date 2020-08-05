@@ -104,6 +104,12 @@ pub fn new_morden<'a, T: Into<SpecParams<'a>>>(params: T) -> Spec {
 	load(params.into(), include_bytes!("../../res/ethereum/morden.json"))
 }
 
+/// Create a new Morden testnet chain spec.
+pub fn new_evancore<'a, T: Into<SpecParams<'a>>>(params: T) -> Spec {
+	load(params.into(), include_bytes!("../../res/ethereum/evancore.json"))
+}
+
+
 /// Create a new Ropsten testnet chain spec.
 pub fn new_ropsten<'a, T: Into<SpecParams<'a>>>(params: T) -> Spec {
 	load(params.into(), include_bytes!("../../res/ethereum/ropsten.json"))
@@ -122,6 +128,16 @@ pub fn new_rinkeby<'a, T: Into<SpecParams<'a>>>(params: T) -> Spec {
 /// Create a new Görli testnet chain spec.
 pub fn new_goerli<'a, T: Into<SpecParams<'a>>>(params: T) -> Spec {
 	load(params.into(), include_bytes!("../../res/ethereum/goerli.json"))
+}
+
+/// Create a new EtherCore testnet chain spec.
+pub fn new_ethercore<'a, T: Into<SpecParams<'a>>>(params: T) -> Spec {
+	load(params.into(), include_bytes!("../../res/ethereum/ethercore.json"))
+}
+
+/// Create a new Yolov1 testnet chain spec.
+pub fn new_yolov1<'a, T: Into<SpecParams<'a>>>(params: T) -> Spec {
+	load(params.into(), include_bytes!("../../res/ethereum/yolov1.json"))
 }
 
 /// Create a new Kotti testnet chain spec.

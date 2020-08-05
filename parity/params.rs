@@ -44,14 +44,17 @@ pub enum SpecType {
 	Expanse,
 	Musicoin,
 	Ellaism,
+	Evancore,
 	Mix,
 	Callisto,
+	EtherCore,
 	Morden,
 	Mordor,
 	Ropsten,
 	Kovan,
 	Rinkeby,
 	Goerli,
+	YOLOv1,
 	Kotti,
 	Sokol,
 	Dev,
@@ -78,14 +81,17 @@ impl str::FromStr for SpecType {
 			"expanse" => SpecType::Expanse,
 			"musicoin" => SpecType::Musicoin,
 			"ellaism" => SpecType::Ellaism,
+			"evancore" => SpecType::Evancore,
 			"mix" => SpecType::Mix,
 			"callisto" => SpecType::Callisto,
+			"ethercore" => SpecType::EtherCore,
 			"morden" => SpecType::Morden,
 			"mordor" | "classic-testnet" => SpecType::Mordor,
 			"ropsten" => SpecType::Ropsten,
 			"kovan" => SpecType::Kovan,
 			"rinkeby" => SpecType::Rinkeby,
 			"goerli" | "görli" | "testnet" => SpecType::Goerli,
+			"yolo" | "yolov1" => SpecType::YOLOv1,
 			"kotti" => SpecType::Kotti,
 			"sokol" | "poasokol" => SpecType::Sokol,
 			"dev" => SpecType::Dev,
@@ -106,7 +112,10 @@ impl fmt::Display for SpecType {
 			SpecType::Ewc => "energyweb",
 			SpecType::Expanse => "expanse",
 			SpecType::Musicoin => "musicoin",
-			SpecType::Ellaism => "ellaism",
+			SpecType::Ellaism => "ellaism", 
+			SpecType::EtherCore => "ethercore",
+			SpecType::YOLOv1 => "ethercore",
+			SpecType::Evancore => "evancore",
 			SpecType::Mix => "mix",
 			SpecType::Callisto => "callisto",
 			SpecType::Morden => "morden",
@@ -136,14 +145,17 @@ impl SpecType {
 			SpecType::Expanse => Ok(ethereum::new_expanse(params)),
 			SpecType::Musicoin => Ok(ethereum::new_musicoin(params)),
 			SpecType::Ellaism => Ok(ethereum::new_ellaism(params)),
+			SpecType::Evancore => Ok(ethereum::new_evancore(params)),
 			SpecType::Mix => Ok(ethereum::new_mix(params)),
 			SpecType::Callisto => Ok(ethereum::new_callisto(params)),
 			SpecType::Morden => Ok(ethereum::new_morden(params)),
 			SpecType::Mordor => Ok(ethereum::new_mordor(params)),
+			SpecType::EtherCore => Ok(ethereum::new_ethercore(params)),
 			SpecType::Ropsten => Ok(ethereum::new_ropsten(params)),
 			SpecType::Kovan => Ok(ethereum::new_kovan(params)),
 			SpecType::Rinkeby => Ok(ethereum::new_rinkeby(params)),
 			SpecType::Goerli => Ok(ethereum::new_goerli(params)),
+			SpecType::YOLOv1 => Ok(ethereum::new_yolov1(params)),
 			SpecType::Kotti => Ok(ethereum::new_kotti(params)),
 			SpecType::Sokol => Ok(ethereum::new_sokol(params)),
 			SpecType::Dev => Ok(Spec::new_instant()),
@@ -396,10 +408,12 @@ mod tests {
 		assert_eq!(SpecType::Musicoin, "musicoin".parse().unwrap());
 		assert_eq!(SpecType::Ellaism, "ellaism".parse().unwrap());
 		assert_eq!(SpecType::Mix, "mix".parse().unwrap());
-		assert_eq!(SpecType::Callisto, "callisto".parse().unwrap());
+		assert_eq!(SpecType::Callisto, "callisto".parse().unwrap()); 
+		assert_eq!(SpecType::Evancore, "evancore".parse().unwrap());
 		assert_eq!(SpecType::Morden, "morden".parse().unwrap());
 		assert_eq!(SpecType::Mordor, "mordor".parse().unwrap());
 		assert_eq!(SpecType::Mordor, "classic-testnet".parse().unwrap());
+		assert_eq!(SpecType::EtherCore, "ethercore".parse().unwrap());
 		assert_eq!(SpecType::Ropsten, "ropsten".parse().unwrap());
 		assert_eq!(SpecType::Kovan, "kovan".parse().unwrap());
 		assert_eq!(SpecType::Rinkeby, "rinkeby".parse().unwrap());
@@ -407,6 +421,8 @@ mod tests {
 		assert_eq!(SpecType::Goerli, "görli".parse().unwrap());
 		assert_eq!(SpecType::Goerli, "testnet".parse().unwrap());
 		assert_eq!(SpecType::Kotti, "kotti".parse().unwrap());
+		assert_eq!(SpecType::YOLOv1, "yolo".parse().unwrap());
+		assert_eq!(SpecType::YOLOv1, "yolov1".parse().unwrap());
 		assert_eq!(SpecType::Sokol, "sokol".parse().unwrap());
 		assert_eq!(SpecType::Sokol, "poasokol".parse().unwrap());
 	}
@@ -427,8 +443,10 @@ mod tests {
 		assert_eq!(format!("{}", SpecType::Expanse), "expanse");
 		assert_eq!(format!("{}", SpecType::Musicoin), "musicoin");
 		assert_eq!(format!("{}", SpecType::Ellaism), "ellaism");
+		assert_eq!(format!("{}", SpecType::Evancore), "evancore");
 		assert_eq!(format!("{}", SpecType::Mix), "mix");
 		assert_eq!(format!("{}", SpecType::Callisto), "callisto");
+		assert_eq!(format!("{}", SpecType::EtherCore), "ethercore");
 		assert_eq!(format!("{}", SpecType::Morden), "morden");
 		assert_eq!(format!("{}", SpecType::Mordor), "mordor");
 		assert_eq!(format!("{}", SpecType::Ropsten), "ropsten");
@@ -436,6 +454,7 @@ mod tests {
 		assert_eq!(format!("{}", SpecType::Rinkeby), "rinkeby");
 		assert_eq!(format!("{}", SpecType::Goerli), "goerli");
 		assert_eq!(format!("{}", SpecType::Kotti), "kotti");
+		assert_eq!(format!("{}", SpecType::YOLOv1), "yolov1");
 		assert_eq!(format!("{}", SpecType::Sokol), "sokol");
 		assert_eq!(format!("{}", SpecType::Dev), "dev");
 		assert_eq!(format!("{}", SpecType::Custom("foo/bar".into())), "foo/bar");
