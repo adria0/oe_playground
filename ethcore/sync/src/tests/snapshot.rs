@@ -18,7 +18,7 @@ use super::helpers::*;
 use bytes::Bytes;
 use ethcore::{
     client::EachBlockWith,
-    snapshot::{ManifestData, RestorationStatus, SnapshotService},
+    snapshot::{CreationStatus, ManifestData, RestorationStatus, SnapshotService},
 };
 use ethereum_types::H256;
 use hash::keccak;
@@ -101,7 +101,14 @@ impl SnapshotService for TestSnapshotService {
         self.chunks.get(&hash).cloned()
     }
 
-    fn status(&self) -> RestorationStatus {
+    fn restoration_status(&self) -> RestorationStatus {
+        self.status.lock().clone()
+    }
+    fn creation_status(&self) -> CreationStatus {
+        CreationStatus::Inactive
+    }
+
+    fn restoration_status(&self) -> RestorationStatus {
         match *self.restoration_manifest.lock() {
             Some(ref manifest)
                 if self.state_restoration_chunks.lock().len() == manifest.state_hashes.len()
@@ -111,6 +118,7 @@ impl SnapshotService for TestSnapshotService {
                 RestorationStatus::Inactive
             }
             Some(ref manifest) => RestorationStatus::Ongoing {
+                block_number: 0,
                 state_chunks: manifest.state_hashes.len() as u32,
                 block_chunks: manifest.block_hashes.len() as u32,
                 state_chunks_done: self.state_restoration_chunks.lock().len() as u32,
@@ -118,6 +126,10 @@ impl SnapshotService for TestSnapshotService {
             },
             None => RestorationStatus::Inactive,
         }
+    }
+
+    fn creation_status(&self) -> CreationStatus {
+        CreationStatus::Inactive
     }
 
     fn begin_restore(&self, manifest: ManifestData) {

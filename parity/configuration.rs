@@ -41,6 +41,7 @@ use std::{
 };
 use sync::{self, validate_node_url, NetworkConfiguration};
 
+use crate::metrics::MetricsConfiguration;
 use account::{AccountCmd, ImportAccounts, ListAccounts, NewAccount};
 use blockchain::{
     BlockchainCmd, ExportBlockchain, ExportState, ImportBlockchain, KillBlockchain, ResetBlockchain,
@@ -163,13 +164,14 @@ impl Configuration {
         let ipfs_conf = self.ipfs_config();
         let secretstore_conf = self.secretstore_config()?;
         let format = self.format()?;
+        let metrics_conf = self.metrics_config()?;
         let keys_iterations = NonZeroU32::new(self.args.arg_keys_iterations)
             .ok_or_else(|| "--keys-iterations must be non-zero")?;
 
         let cmd = if self.args.flag_version {
             Cmd::Version
         } else if self.args.cmd_signer {
-            let authfile = ::signer::codes_path(&ws_conf.signer_path);
+            let authfile = crate::signer::codes_path(&ws_conf.signer_path);
 
             if self.args.cmd_signer_new_token {
                 Cmd::SignerToken(ws_conf, logger_config.clone())
@@ -434,6 +436,7 @@ impl Configuration {
                 verifier_settings: verifier_settings,
                 no_persistent_txqueue: self.args.flag_no_persistent_txqueue,
                 max_round_blocks_to_import: self.args.arg_max_round_blocks_to_import,
+                metrics_conf,
             };
             Cmd::Run(run_cmd)
         };
@@ -983,6 +986,15 @@ impl Configuration {
         Ok(conf)
     }
 
+    fn metrics_config(&self) -> Result<MetricsConfiguration, String> {
+        let conf = MetricsConfiguration {
+            enabled: self.metrics_enabled(),
+            interface: self.metrics_interface(),
+            port: self.args.arg_ports_shift + self.args.arg_metrics_port,
+        };
+        Ok(conf)
+    }
+
     fn private_provider_config(&self) -> Result<(ProviderConfig, EncryptorConfig, bool), String> {
         let provider_conf = ProviderConfig {
             validator_accounts: to_addresses(&self.args.arg_private_validators)?,
@@ -1144,6 +1156,10 @@ impl Configuration {
         self.interface(&self.args.arg_ipfs_api_interface)
     }
 
+    fn metrics_interface(&self) -> String {
+        self.interface(&self.args.arg_metrics_interface)
+    }
+
     fn secretstore_interface(&self) -> String {
         self.interface(&self.args.arg_secretstore_interface)
     }
@@ -1222,6 +1238,10 @@ impl Configuration {
 
     fn ws_enabled(&self) -> bool {
         !self.args.flag_no_ws
+    }
+
+    fn metrics_enabled(&self) -> bool {
+        self.args.flag_metrics
     }
 
     fn secretstore_enabled(&self) -> bool {
@@ -1642,6 +1662,7 @@ mod tests {
             verifier_settings: Default::default(),
             no_persistent_txqueue: false,
             max_round_blocks_to_import: 12,
+            metrics_conf: MetricsConfiguration::default(),
         };
         expected.secretstore_conf.enabled = cfg!(feature = "secretstore");
         expected.secretstore_conf.http_enabled = cfg!(feature = "secretstore");

@@ -1121,3 +1121,7 @@ impl super::traits::EngineClient for TestBlockChainClient {
         BlockChainClient::block_header(self, id)
     }
 }
+
+impl PrometheusMetrics for TestBlockChainClient {
+    fn prometheus_metrics(&self, _r: &mut prometheus::Registry) {}
+}

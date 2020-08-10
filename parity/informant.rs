@@ -247,10 +247,15 @@ impl<T: InformantData> Informant<T> {
 
         let rpc_stats = self.rpc_stats.as_ref();
         let snapshot_sync = sync_info.as_ref().map_or(false, |s| s.snapshot_sync)
-            && self.snapshot.as_ref().map_or(false, |s| match s.status() {
-                RestorationStatus::Ongoing { .. } | RestorationStatus::Initializing { .. } => true,
-                _ => false,
-            });
+            && self
+                .snapshot
+                .as_ref()
+                .map_or(false, |s| match s.restoration_status() {
+                    RestorationStatus::Ongoing { .. } | RestorationStatus::Initializing { .. } => {
+                        true
+                    }
+                    _ => false,
+                });
         if !importing && !snapshot_sync && elapsed < Duration::from_secs(30) {
             return;
         }
@@ -285,7 +290,7 @@ impl<T: InformantData> Informant<T> {
                     ),
                     true => {
                         self.snapshot.as_ref().map_or(String::new(), |s|
-                            match s.status() {
+                            match s.restoration_status() {
                                 RestorationStatus::Ongoing { state_chunks, block_chunks, state_chunks_done, block_chunks_done } => {
                                     format!("Syncing snapshot {}/{}", state_chunks_done + block_chunks_done, state_chunks + block_chunks)
                                 },

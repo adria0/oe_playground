@@ -30,7 +30,8 @@ use std::{
 
 use super::{
     io::{LooseReader, LooseWriter, SnapshotReader, SnapshotWriter},
-    ManifestData, Rebuilder, RestorationStatus, SnapshotService, StateRebuilder, MAX_CHUNK_SIZE,
+    CreationStatus, ManifestData, Rebuilder, RestorationStatus, SnapshotService, StateRebuilder,
+    MAX_CHUNK_SIZE,
 };
 
 use blockchain::{BlockChain, BlockChainDB, BlockChainDBHandler};
@@ -271,6 +272,7 @@ pub struct Service {
     client: Arc<dyn SnapshotClient>,
     progress: super::Progress,
     taking_snapshot: AtomicBool,
+    taking_snapshot_at: AtomicUsize,
     restoring_snapshot: AtomicBool,
 }
 
@@ -292,6 +294,7 @@ impl Service {
             client: params.client,
             progress: Default::default(),
             taking_snapshot: AtomicBool::new(false),
+            taking_snapshot_at: AtomicUsize::new(0),
             restoring_snapshot: AtomicBool::new(false),
         };
 
@@ -522,6 +525,9 @@ impl Service {
             return Ok(());
         }
 
+        self.taking_snapshot_at
+            .store(num as usize, Ordering::SeqCst);
+
         info!("Taking snapshot at #{}", num);
         self.progress.reset();
 
@@ -629,6 +635,7 @@ impl Service {
 
         self.restoring_snapshot.store(true, Ordering::SeqCst);
 
+        let block_number = manifest.block_number;
         // Import previous chunks, continue if it fails
         self.import_prev_chunks(&mut res, manifest).ok();
 
@@ -636,6 +643,7 @@ impl Service {
         let mut restoration_status = self.status.lock();
         if let RestorationStatus::Initializing { .. } = *restoration_status {
             *restoration_status = RestorationStatus::Ongoing {
+                block_number,
                 state_chunks: state_chunks as u32,
                 block_chunks: block_chunks as u32,
                 state_chunks_done: self.state_chunks.load(Ordering::SeqCst) as u32,
@@ -774,7 +782,7 @@ impl Service {
         is_state: bool,
     ) -> Result<(), Error> {
         let (result, db) = {
-            match self.status() {
+            match self.restoration_status() {
                 RestorationStatus::Inactive | RestorationStatus::Failed => {
                     trace!(target: "snapshot", "Tried to restore chunk {:x} while inactive or failed", hash);
                     return Ok(());
@@ -881,7 +889,17 @@ impl SnapshotService for Service {
         }
     }
 
-    fn status(&self) -> RestorationStatus {
+    fn creation_status(&self) -> CreationStatus {
+        if self.taking_snapshot.load(Ordering::SeqCst) {
+            CreationStatus::Ongoing {
+                block_number: self.taking_snapshot_at.load(Ordering::SeqCst) as u32,
+            }
+        } else {
+            CreationStatus::Inactive
+        }
+    }
+
+    fn restoration_status(&self) -> RestorationStatus {
         let mut cur_status = self.status.lock();
 
         match *cur_status {
@@ -974,7 +992,7 @@ mod tests {
     use client::ClientIoMessage;
     use io::IoService;
     use journaldb::Algorithm;
-    use snapshot::{ManifestData, RestorationStatus, SnapshotService};
+    use snapshot::{CreationStatus, ManifestData, RestorationStatus, SnapshotService};
     use spec::Spec;
     use tempdir::TempDir;
     use test_helpers::{generate_dummy_client_with_spec_and_data, restoration_db_handler};

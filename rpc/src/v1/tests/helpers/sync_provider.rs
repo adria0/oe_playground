@@ -19,6 +19,7 @@
 use ethereum_types::H256;
 use network::client_version::ClientVersion;
 use parking_lot::RwLock;
+use stats::{prometheus, PrometheusMetrics};
 use std::collections::BTreeMap;
 use sync::{EthProtocolInfo, PeerInfo, SyncProvider, SyncState, SyncStatus, TransactionStats};
 
@@ -64,6 +65,11 @@ impl TestSyncProvider {
         let mut status = self.status.write();
         let current_number = status.last_imported_block_number.unwrap_or(0);
         status.last_imported_block_number = Some(current_number + count);
+    }
+
+    impl PrometheusMetrics for TestSyncProvider {
+        fn prometheus_metrics(&self, _: &mut prometheus::Registry) {
+        }
     }
 }
 

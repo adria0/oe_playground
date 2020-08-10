@@ -1072,7 +1072,7 @@ impl ChainSync {
 					}
 				},
 				SyncState::SnapshotData => {
-					match io.snapshot_service().status() {
+					match io.snapshot_service().restoration_status() {
 						RestorationStatus::Ongoing { state_chunks_done, block_chunks_done, .. } => {
 							// Initialize the snapshot if not already done
 							self.snapshot.initialize(io.snapshot_service());
@@ -1277,13 +1277,13 @@ impl ChainSync {
                 self.state = SyncState::Blocks;
                 self.continue_sync(io);
             }
-            SyncState::SnapshotData => match io.snapshot_service().status() {
+            SyncState::SnapshotData => match io.snapshot_service().restoration_status() {
                 RestorationStatus::Inactive | RestorationStatus::Failed => {
                     self.state = SyncState::SnapshotWaiting;
                 }
                 RestorationStatus::Initializing { .. } | RestorationStatus::Ongoing { .. } => (),
             },
-            SyncState::SnapshotWaiting => match io.snapshot_service().status() {
+            SyncState::SnapshotWaiting => match io.snapshot_service().restoration_status() {
                 RestorationStatus::Inactive => {
                     trace!(target:"sync", "Snapshot restoration is complete");
                     self.restart(io);

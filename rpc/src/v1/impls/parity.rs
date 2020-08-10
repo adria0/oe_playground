@@ -29,6 +29,7 @@ use ethereum_types::{Address, H160, H256, H512, H64, U256, U64};
 use ethkey::{crypto::ecies, Brain, Generator};
 use ethstore::random_phrase;
 use jsonrpc_core::{futures::future, BoxFuture, Result};
+use stats::PrometheusMetrics;
 use sync::{ManageNetwork, SyncProvider};
 use types::ids::BlockId;
 use updater::Service as UpdateService;
@@ -53,7 +54,10 @@ use v1::{
 use Host;
 
 /// Parity implementation.
-pub struct ParityClient<C, M, U> {
+pub struct ParityClient<C, M, U>
+where
+    C: PrometheusMetrics,
+{
     client: Arc<C>,
     miner: Arc<M>,
     updater: Arc<U>,
@@ -103,6 +107,7 @@ where
     S: StateInfo + 'static,
     C: miner::BlockChainClient
         + BlockChainClient
+        + PrometheusMetrics
         + StateClient<State = S>
         + Call<State = S>
         + 'static,
@@ -479,7 +484,7 @@ where
 
     fn status(&self) -> Result<()> {
         let has_peers = self.settings.is_dev_chain || self.sync.status().num_peers > 0;
-        let is_warping = match self.snapshot.as_ref().map(|s| s.status()) {
+        let is_warping = match self.snapshot.as_ref().map(|s| s.restoration_status()) {
             Some(RestorationStatus::Ongoing { .. }) => true,
             _ => false,
         };

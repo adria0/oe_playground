@@ -21,6 +21,7 @@ use std::{
     time::{Duration, Instant},
 };
 
+use crate::metrics::{start_prometheus_metrics, MetricsConfiguration};
 use account_utils;
 use ansi_term::Colour;
 use bytes::Bytes;
@@ -125,6 +126,7 @@ pub struct RunCmd {
     pub verifier_settings: VerifierSettings,
     pub no_persistent_txqueue: bool,
     pub max_round_blocks_to_import: usize,
+    pub metrics_conf: MetricsConfiguration,
 }
 
 // node info fetcher for the local store.
