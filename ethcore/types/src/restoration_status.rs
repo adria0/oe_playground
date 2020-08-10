@@ -42,15 +42,3 @@ pub enum RestorationStatus {
     /// Failed restoration.
     Failed,
 }
-
-/// Statuses for snapshot creation.
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
-pub enum CreationStatus {
-    /// No creation activity currently.
-    Inactive,
-    /// Snapshot creation is in progress.
-    Ongoing {
-        /// Current created snapshot.
-        block_number: u32,
-    },
-}

@@ -22,8 +22,6 @@ use dir::Directories;
 use ethereum_types::Address;
 use ethkey::Password;
 
-use params::{AccountsConfig, SpecType};
-
 #[cfg(not(feature = "accounts"))]
 mod accounts {
     use super::*;

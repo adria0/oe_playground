@@ -72,7 +72,7 @@ where
 
 impl<C, M, U> ParityClient<C, M, U>
 where
-    C: BlockChainClient,
+    C: BlockChainClient + PrometheusMetrics,
 {
     /// Creates new `ParityClient`.
     pub fn new(

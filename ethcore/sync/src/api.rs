@@ -32,8 +32,9 @@ use std::{
 use super::light_sync::SyncInfo;
 use chain::{
     sync_packet::SyncPacket::{PrivateTransactionPacket, SignedPrivateTransactionPacket},
-    ChainSyncApi, SyncStatus as EthSyncStatus, ETH_PROTOCOL_VERSION_62, ETH_PROTOCOL_VERSION_63,
-    PAR_PROTOCOL_VERSION_1, PAR_PROTOCOL_VERSION_2, PAR_PROTOCOL_VERSION_3,
+    ChainSyncApi, SyncState, SyncStatus as EthSyncStatus, ETH_PROTOCOL_VERSION_62,
+    ETH_PROTOCOL_VERSION_63, PAR_PROTOCOL_VERSION_1, PAR_PROTOCOL_VERSION_2,
+    PAR_PROTOCOL_VERSION_3,
 };
 use ethcore::{
     client::{BlockChainClient, ChainMessageType, ChainNotify, NewBlocks},
@@ -52,10 +53,8 @@ use std::{
 };
 use sync_io::NetSyncIo;
 use types::{
-    pruning_info::PruningInfo,
-    snapshot::{CreationStatus, RestorationStatus},
-    transaction::UnverifiedTransaction,
-    BlockNumber,
+    creation_status::CreationStatus, pruning_info::PruningInfo,
+    restoration_status::RestorationStatus, transaction::UnverifiedTransaction, BlockNumber,
 };
 
 /// Parity sync protocol
@@ -376,12 +375,13 @@ impl PrometheusMetrics for EthSync {
             "Highest block number in the download queue",
             sync_status.highest_block_number.unwrap_or(0) as i64,
         );
+        /*
         prometheus_gauge(
             r,
             "sync_is_majorsync",
             "Are we in the middle of a major sync?",
             scalar(self.is_major_syncing()),
-        );
+        );*/
         prometheus_gauge(
             r,
             "sync_mem_used",

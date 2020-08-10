@@ -21,13 +21,26 @@ use std::{
     time::{Duration, Instant},
 };
 
-use crate::metrics::{start_prometheus_metrics, MetricsConfiguration};
-use account_utils;
+use crate::{
+    account_utils,
+    cache::CacheConfig,
+    db,
+    helpers::{execute_upgrades, passwords_from_files, to_client_config},
+    informant::{FullNodeInformantData, Informant, LightNodeInformantData},
+    ipfs,
+    metrics::{start_prometheus_metrics, MetricsConfiguration},
+    miner::{external::ExternalMiner, work_notify::WorkPoster},
+    modules,
+    params::{
+        fatdb_switch_to_bool, mode_switch_to_bool, tracing_switch_to_bool, AccountsConfig,
+        GasPricerConfig, MinerExtras, Pruning, SpecType, Switch,
+    },
+    rpc, rpc_apis, secretstore, signer,
+    user_defaults::UserDefaults,
+};
 use ansi_term::Colour;
 use bytes::Bytes;
-use cache::CacheConfig;
 use call_contract::CallContract;
-use db;
 use dir::{DatabaseDirectories, Directories};
 use ethcore::{
     client::{
@@ -43,18 +56,10 @@ use ethcore_service::ClientService;
 use ethereum_types::Address;
 use futures::IntoFuture;
 use hash_fetch::{self, fetch};
-use helpers::{execute_upgrades, passwords_from_files, to_client_config};
-use informant::{FullNodeInformantData, Informant};
-use ipfs;
 use journaldb::Algorithm;
 use jsonrpc_core;
-use miner::{external::ExternalMiner, work_notify::WorkPoster};
-use modules;
+use light::Cache as LightDataCache;
 use node_filter::NodeFilter;
-use params::{
-    fatdb_switch_to_bool, mode_switch_to_bool, tracing_switch_to_bool, AccountsConfig,
-    GasPricerConfig, MinerExtras, Pruning, SpecType, Switch,
-};
 use parity_rpc::{
     informant, is_major_importing, FutureOutput, FutureResponse, FutureResult, Metadata,
     NetworkSettings, Origin, PubSubSession,
@@ -62,13 +67,8 @@ use parity_rpc::{
 use parity_runtime::Runtime;
 use parity_version::version;
 use registrar::{Asynchronous, RegistrarClient};
-use rpc;
-use rpc_apis;
-use secretstore;
-use signer;
 use sync::{self, PrivateTxHandler, SyncConfig};
 use updater::{UpdatePolicy, Updater};
-use user_defaults::UserDefaults;
 
 // how often to take periodic snapshots.
 const SNAPSHOT_PERIOD: u64 = 5000;
@@ -599,6 +599,10 @@ where
     let rpc_direct = rpc::setup_apis(rpc_apis::ApiSet::All, &dependencies);
     let ws_server = rpc::new_ws(cmd.ws_conf.clone(), &dependencies)?;
     let ipc_server = rpc::new_ipc(cmd.ipc_conf, &dependencies)?;
+
+    // start the prometheus metrics server
+    start_prometheus_metrics(&cmd.metrics_conf, &dependencies)?;
+
     let http_server = rpc::new_http(
         "HTTP JSON-RPC",
         "jsonrpc",

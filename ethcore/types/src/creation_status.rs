@@ -14,21 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Ethereum.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Blockchain test state deserializer.
-
-use crate::blockchain::account::Account;
-use hash::Address;
-use std::collections::BTreeMap;
-
-/// Blockchain test state deserializer.
-#[derive(Debug, PartialEq, Deserialize, Clone)]
-pub struct State(BTreeMap<Address, Account>);
-
-impl IntoIterator for State {
-    type Item = <BTreeMap<Address, Account> as IntoIterator>::Item;
-    type IntoIter = <BTreeMap<Address, Account> as IntoIterator>::IntoIter;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.0.into_iter()
-    }
+/// Statuses for snapshot creation.
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+pub enum CreationStatus {
+    /// No creation activity currently.
+    Inactive,
+    /// Snapshot creation is in progress.
+    Ongoing {
+        /// Current created snapshot.
+        block_number: u32,
+    },
 }

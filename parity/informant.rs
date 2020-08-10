@@ -291,7 +291,7 @@ impl<T: InformantData> Informant<T> {
                     true => {
                         self.snapshot.as_ref().map_or(String::new(), |s|
                             match s.restoration_status() {
-                                RestorationStatus::Ongoing { state_chunks, block_chunks, state_chunks_done, block_chunks_done } => {
+                                RestorationStatus::Ongoing { state_chunks, block_chunks, state_chunks_done, block_chunks_done, .. } => {
                                     format!("Syncing snapshot {}/{}", state_chunks_done + block_chunks_done, state_chunks + block_chunks)
                                 },
                                 RestorationStatus::Initializing { chunks_done } => {

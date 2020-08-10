@@ -27,6 +27,11 @@ use ethcore::client::ClientConfig;
 use kvdb::KeyValueDB;
 use std::{fs, io, path::Path, sync::Arc};
 
+<<<<<<< HEAD
+=======
+use crate::cache::CacheConfig;
+
+>>>>>>> 2018 rust compatibility. FMT.
 mod blooms;
 mod helpers;
 mod migration;

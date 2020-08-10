@@ -23,7 +23,7 @@ use ethereum_types::H256;
 use io::{IoContext, IoError, IoHandler, IoService, TimerToken};
 use stop_guard::StopGuard;
 
-use blockchain::{BlockChainDB, BlockChainDBHandler};
+use crate::blockchain::{BlockChainDB, BlockChainDBHandler};
 use ethcore::{
     client::{ChainNotify, Client, ClientConfig, ClientIoMessage},
     error::{Error as EthcoreError, ErrorKind},
