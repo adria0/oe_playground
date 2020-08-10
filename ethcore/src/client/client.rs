@@ -3265,6 +3265,7 @@ impl PrometheusMetrics for Client {
         );
 
         // io
+        /*
         let io_stats = self
             .db
             .read()
@@ -3311,7 +3312,7 @@ impl PrometheusMetrics for Client {
             "io_bytes_written",
             "Number of bytes written",
             io_stats.bytes_written as i64,
-        );
+        );*/
 
         // chain info
         let chain = self.chain_info();
