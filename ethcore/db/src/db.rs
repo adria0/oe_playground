@@ -33,8 +33,6 @@ pub const COL_BODIES: Option<u32> = Some(2);
 pub const COL_EXTRA: Option<u32> = Some(3);
 /// Column for Traces
 pub const COL_TRACE: Option<u32> = Some(4);
-/// Column for the empty accounts bloom filter.
-pub const COL_ACCOUNT_BLOOM: Option<u32> = Some(5);
 /// Column for general information from the local node which can persist.
 pub const COL_NODE_INFO: Option<u32> = Some(6);
 /// Column for the light client chain.
