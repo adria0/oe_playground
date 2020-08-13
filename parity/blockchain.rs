@@ -40,14 +40,6 @@ use ethcore_private_tx;
 use ethcore_service::ClientService;
 use ethereum_types::{Address, H256, U256};
 use hash::{keccak, KECCAK_NULL_RLP};
-<<<<<<< HEAD
-use helpers::{execute_upgrades, to_client_config};
-use informant::{FullNodeInformantData, Informant, MillisecondDuration};
-use params::{fatdb_switch_to_bool, tracing_switch_to_bool, Pruning, SpecType, Switch};
-=======
-use rlp::PayloadInfo;
-use rustc_hex::FromHex;
->>>>>>> 2018 rust compatibility. FMT.
 use types::data_format::DataFormat;
 
 #[derive(Debug, PartialEq)]

@@ -22,7 +22,6 @@ use crate::{
     },
     cache::CacheConfig,
     cli::{Args, ArgsError},
-    export_hardcoded_sync::ExportHsyncCmd,
     helpers::{
         parity_ipc_path, to_address, to_addresses, to_block_id, to_bootnodes, to_duration, to_mode,
         to_pending_set, to_price, to_queue_penalization, to_queue_strategy, to_u256,
@@ -71,16 +70,8 @@ use dir::{
 };
 use ethcore_logger::Config as LogConfig;
 use ethcore_private_tx::{EncryptorConfig, ProviderConfig};
-<<<<<<< HEAD
-use helpers::{
-    parity_ipc_path, to_address, to_addresses, to_block_id, to_bootnodes, to_duration, to_mode,
-    to_pending_set, to_price, to_queue_penalization, to_queue_strategy, to_u256,
-};
-use ipfs::Configuration as IpfsConfiguration;
-=======
 
 use crate::ipfs::Configuration as IpfsConfiguration;
->>>>>>> 2018 rust compatibility. FMT.
 use network::IpFilter;
 use parity_rpc::NetworkSettings;
 
@@ -1332,16 +1323,6 @@ impl Configuration {
 
         settings
     }
-<<<<<<< HEAD
-=======
-
-    fn whisper_config(&self) -> crate::whisper::Config {
-        crate::whisper::Config {
-            enabled: self.args.flag_whisper,
-            target_message_pool_size: self.args.arg_whisper_pool_size * 1024 * 1024,
-        }
-    }
->>>>>>> 2018 rust compatibility. FMT.
 }
 
 fn into_secretstore_service_contract_address(

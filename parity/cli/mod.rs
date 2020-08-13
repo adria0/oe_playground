@@ -1137,8 +1137,8 @@ struct Misc {
 #[cfg(test)]
 mod tests {
     use super::{
-        Account, Args, ArgsError, Config, Footprint, Ipc, Ipfs, Mining, Metrics, Misc, Network, Operating,
-        Rpc, SecretStore, Snapshots, Ws,
+        Account, Args, ArgsError, Config, Footprint, Ipc, Ipfs, Metrics, Mining, Misc, Network,
+        Operating, Rpc, SecretStore, Snapshots, Ws,
     };
     use clap::ErrorKind as ClapErrorKind;
     use toml;

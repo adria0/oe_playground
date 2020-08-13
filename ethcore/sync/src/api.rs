@@ -29,7 +29,6 @@ use std::{
     time::Duration,
 };
 
-use super::light_sync::SyncInfo;
 use chain::{
     sync_packet::SyncPacket::{PrivateTransactionPacket, SignedPrivateTransactionPacket},
     ChainSyncApi, SyncState, SyncStatus as EthSyncStatus, ETH_PROTOCOL_VERSION_62,
@@ -53,8 +52,8 @@ use std::{
 };
 use sync_io::NetSyncIo;
 use types::{
-    creation_status::CreationStatus, pruning_info::PruningInfo,
-    restoration_status::RestorationStatus, transaction::UnverifiedTransaction, BlockNumber,
+    creation_status::CreationStatus, restoration_status::RestorationStatus,
+    transaction::UnverifiedTransaction, BlockNumber,
 };
 
 /// Parity sync protocol

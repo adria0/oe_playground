@@ -26,7 +26,7 @@ use crate::{
     cache::CacheConfig,
     db,
     helpers::{execute_upgrades, passwords_from_files, to_client_config},
-    informant::{FullNodeInformantData, Informant, LightNodeInformantData},
+    informant::{FullNodeInformantData, Informant},
     ipfs,
     metrics::{start_prometheus_metrics, MetricsConfiguration},
     miner::{external::ExternalMiner, work_notify::WorkPoster},
@@ -58,7 +58,6 @@ use futures::IntoFuture;
 use hash_fetch::{self, fetch};
 use journaldb::Algorithm;
 use jsonrpc_core;
-use light::Cache as LightDataCache;
 use node_filter::NodeFilter;
 use parity_rpc::{
     informant, is_major_importing, FutureOutput, FutureResponse, FutureResult, Metadata,

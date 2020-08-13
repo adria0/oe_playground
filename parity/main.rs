@@ -28,7 +28,6 @@ extern crate panic_hook;
 extern crate parity_daemonize;
 extern crate parity_ethereum;
 extern crate parking_lot;
-extern crate tokio;
 
 extern crate ethcore_logger;
 #[cfg(windows)]

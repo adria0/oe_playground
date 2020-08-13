@@ -1,13 +1,10 @@
 use std::{sync::Arc, time::Instant};
 
-use crate::{rpc, rpc_apis};
+use crate::{futures::Future, rpc, rpc_apis};
 
 use parking_lot::Mutex;
 
-use hyper::{
-    service::{make_service_fn, service_fn},
-    Body, Method, Request, Response, Server, StatusCode,
-};
+use hyper::{service::service_fn_ok, Body, Method, Request, Response, Server, StatusCode};
 
 use stats::{
     prometheus::{self, Encoder},
@@ -38,10 +35,10 @@ struct State {
     rpc_apis: Arc<rpc_apis::FullDependencies>,
 }
 
-async fn handle_request(req: Request<Body>, state: Arc<Mutex<State>>) -> Response<Body> {
+fn handle_request(req: Request<Body>, state: Arc<Mutex<State>>) -> Response<Body> {
     let (parts, _body) = req.into_parts();
     match (parts.method, parts.uri.path()) {
-        (Method::GET, "/metrics") => tokio::task::spawn_blocking(move || {
+        (Method::GET, "/metrics") => {
             let start = Instant::now();
 
             let mut reg = prometheus::Registry::new();
@@ -66,9 +63,7 @@ async fn handle_request(req: Request<Body>, state: Arc<Mutex<State>>) -> Respons
             let text = String::from_utf8(buffer).expect("metrics encoding is ASCII; qed");
 
             Response::new(Body::from(text))
-        })
-        .await
-        .expect("The prometheus collection has panicked"),
+        }
         (_, _) => {
             let mut res = Response::new(Body::from("not found"));
             *res.status_mut() = StatusCode::NOT_FOUND;
@@ -96,21 +91,18 @@ pub fn start_prometheus_metrics(
     };
     let state = Arc::new(Mutex::new(state));
 
-    deps.executor.spawn_std(async move {
-        let make_service = make_service_fn(move |_| {
+    let server = Server::bind(&addr)
+        .serve(move || {
+            // This is the `Service` that will handle the connection.
+            // `service_fn_ok` is a helper to convert a function that
+            // returns a Response into a `Service`.
             let state = state.clone();
-            async move {
-                Ok::<_, hyper::Error>(service_fn(move |req| {
-                    let response = handle_request(req, state.clone());
-                    async move { Ok::<_, hyper::Error>(response.await) }
-                }))
-            }
-        });
-        Server::bind(&addr)
-            .serve(make_service)
-            .await
-            .expect("unable to create prometheus service.");
-    });
+            service_fn_ok(move |req: Request<Body>| handle_request(req, state.clone()))
+        })
+        .map_err(|e| eprintln!("server error: {}", e));
+    println!("Listening on http://{}", addr);
+
+    deps.executor.spawn(server);
 
     Ok(())
 }
