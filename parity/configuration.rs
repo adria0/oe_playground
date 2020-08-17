@@ -71,7 +71,6 @@ use dir::{
 use ethcore_logger::Config as LogConfig;
 use ethcore_private_tx::{EncryptorConfig, ProviderConfig};
 
-use crate::ipfs::Configuration as IpfsConfiguration;
 use network::IpFilter;
 use parity_rpc::NetworkSettings;
 
@@ -165,7 +164,6 @@ impl Configuration {
         let compaction = self.args.arg_db_compaction.parse()?;
         let warp_sync = !self.args.flag_no_warp;
         let experimental_rpcs = self.args.flag_jsonrpc_experimental;
-        let ipfs_conf = self.ipfs_config();
         let secretstore_conf = self.secretstore_config()?;
         let format = self.format()?;
         let metrics_conf = self.metrics_config()?;
@@ -427,7 +425,6 @@ impl Configuration {
                 warp_barrier: self.args.arg_warp_barrier,
                 experimental_rpcs,
                 net_settings: self.network_settings()?,
-                ipfs_conf: ipfs_conf,
                 secretstore_conf: secretstore_conf,
                 private_provider_conf: private_provider_conf,
                 private_encryptor_conf: private_enc_conf,
@@ -688,16 +685,6 @@ impl Configuration {
         })
     }
 
-    fn ipfs_config(&self) -> IpfsConfiguration {
-        IpfsConfiguration {
-            enabled: self.args.flag_ipfs_api,
-            port: self.args.arg_ports_shift + self.args.arg_ipfs_api_port,
-            interface: self.ipfs_interface(),
-            cors: self.ipfs_cors(),
-            hosts: self.ipfs_hosts(),
-        }
-    }
-
     fn gas_pricer_config(&self) -> Result<GasPricerConfig, String> {
         fn wei_per_gas(usd_per_tx: f32, usd_per_eth: f32) -> U256 {
             let wei_per_usd: f32 = 1.0e18 / usd_per_eth;
@@ -890,10 +877,6 @@ impl Configuration {
         Self::cors(&cors)
     }
 
-    fn ipfs_cors(&self) -> Option<Vec<String>> {
-        Self::cors(self.args.arg_ipfs_api_cors.as_ref())
-    }
-
     fn hosts(&self, hosts: &str, interface: &str) -> Option<Vec<String>> {
         if self.args.flag_unsafe_expose {
             return None;
@@ -930,10 +913,6 @@ impl Configuration {
         }
 
         Self::parse_hosts(&self.args.arg_ws_origins)
-    }
-
-    fn ipfs_hosts(&self) -> Option<Vec<String>> {
-        self.hosts(&self.args.arg_ipfs_api_hosts, &self.ipfs_interface())
     }
 
     fn ipc_config(&self) -> Result<IpcConfiguration, String> {
@@ -1118,10 +1097,6 @@ impl Configuration {
 
     fn ws_interface(&self) -> String {
         self.interface(&self.args.arg_ws_interface)
-    }
-
-    fn ipfs_interface(&self) -> String {
-        self.interface(&self.args.arg_ipfs_api_interface)
     }
 
     fn metrics_interface(&self) -> String {
@@ -1607,7 +1582,6 @@ mod tests {
             vm_type: Default::default(),
             experimental_rpcs: false,
             net_settings: Default::default(),
-            ipfs_conf: Default::default(),
             secretstore_conf: Default::default(),
             private_provider_conf: Default::default(),
             private_encryptor_conf: Default::default(),
@@ -1697,51 +1671,6 @@ mod tests {
         assert_eq!(
             conf3.rpc_hosts(),
             Some(vec!["parity.io".into(), "something.io".into()])
-        );
-    }
-
-    #[test]
-    fn should_parse_ipfs_hosts() {
-        // given
-
-        // when
-        let conf0 = parse(&["parity"]);
-        let conf1 = parse(&["parity", "--ipfs-api-hosts", "none"]);
-        let conf2 = parse(&["parity", "--ipfs-api-hosts", "all"]);
-        let conf3 = parse(&["parity", "--ipfs-api-hosts", "parity.io,something.io"]);
-
-        // then
-        assert_eq!(conf0.ipfs_hosts(), Some(Vec::new()));
-        assert_eq!(conf1.ipfs_hosts(), Some(Vec::new()));
-        assert_eq!(conf2.ipfs_hosts(), None);
-        assert_eq!(
-            conf3.ipfs_hosts(),
-            Some(vec!["parity.io".into(), "something.io".into()])
-        );
-    }
-
-    #[test]
-    fn should_parse_ipfs_cors() {
-        // given
-
-        // when
-        let conf0 = parse(&["parity"]);
-        let conf1 = parse(&["parity", "--ipfs-api-cors", "*"]);
-        let conf2 = parse(&[
-            "parity",
-            "--ipfs-api-cors",
-            "http://parity.io,http://something.io",
-        ]);
-
-        // then
-        assert_eq!(conf0.ipfs_cors(), Some(vec![]));
-        assert_eq!(conf1.ipfs_cors(), None);
-        assert_eq!(
-            conf2.ipfs_cors(),
-            Some(vec![
-                "http://parity.io".into(),
-                "http://something.io".into()
-            ])
         );
     }
 
@@ -1845,7 +1774,6 @@ mod tests {
                 }
                 // "web3,eth,net,personal,parity,parity_set,traces,parity_accounts");
                 assert_eq!(c.http_conf.hosts, None);
-                assert_eq!(c.ipfs_conf.hosts, None);
             }
             _ => panic!("Should be Cmd::Run"),
         }
@@ -1867,7 +1795,6 @@ mod tests {
                 }
                 // "web3,eth,net,personal,parity,parity_set,traces,parity_accounts");
                 assert_eq!(c.http_conf.hosts, None);
-                assert_eq!(c.ipfs_conf.hosts, None);
             }
             _ => panic!("Should be Cmd::Run"),
         }
@@ -1917,7 +1844,6 @@ mod tests {
         assert_eq!(conf0.ws_config().unwrap().port, 8547);
         assert_eq!(conf0.secretstore_config().unwrap().port, 8084);
         assert_eq!(conf0.secretstore_config().unwrap().http_port, 8083);
-        assert_eq!(conf0.ipfs_config().port, 5002);
         assert_eq!(conf0.stratum_options().unwrap().unwrap().port, 8009);
 
         assert_eq!(conf1.net_addresses().unwrap().0.port(), 30304);
@@ -1927,7 +1853,6 @@ mod tests {
         assert_eq!(conf1.ws_config().unwrap().port, 8547);
         assert_eq!(conf1.secretstore_config().unwrap().port, 8084);
         assert_eq!(conf1.secretstore_config().unwrap().http_port, 8083);
-        assert_eq!(conf1.ipfs_config().port, 5002);
     }
 
     #[test]
@@ -1982,8 +1907,6 @@ mod tests {
             &conf0.secretstore_config().unwrap().http_interface,
             "0.0.0.0"
         );
-        assert_eq!(&conf0.ipfs_config().interface, "0.0.0.0");
-        assert_eq!(conf0.ipfs_config().hosts, None);
     }
 
     #[test]
