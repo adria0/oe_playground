@@ -1317,7 +1317,7 @@ mod tests {
         rpc_apis::ApiSet,
         run::RunCmd,
     };
-    use dir::{default_hypervisor_path, Directories};
+    use dir::Directories;
 
     use tempdir::TempDir;
     use types::{data_format::DataFormat, ids::BlockId};

@@ -992,7 +992,7 @@ mod tests {
     use client::ClientIoMessage;
     use io::IoService;
     use journaldb::Algorithm;
-    use snapshot::{CreationStatus, ManifestData, RestorationStatus, SnapshotService};
+    use snapshot::{ManifestData, RestorationStatus, SnapshotService};
     use spec::Spec;
     use tempdir::TempDir;
     use test_helpers::{generate_dummy_client_with_spec_and_data, restoration_db_handler};
@@ -1021,7 +1021,7 @@ mod tests {
 
         assert!(service.manifest().is_none());
         assert!(service.chunk(Default::default()).is_none());
-        assert_eq!(service.status(), RestorationStatus::Inactive);
+        assert_eq!(service.restoration_status(), RestorationStatus::Inactive);
 
         let manifest = ManifestData {
             version: 2,

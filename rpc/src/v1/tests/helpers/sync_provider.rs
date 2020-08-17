@@ -66,11 +66,10 @@ impl TestSyncProvider {
         let current_number = status.last_imported_block_number.unwrap_or(0);
         status.last_imported_block_number = Some(current_number + count);
     }
+}
 
-    impl PrometheusMetrics for TestSyncProvider {
-        fn prometheus_metrics(&self, _: &mut prometheus::Registry) {
-        }
-    }
+impl PrometheusMetrics for TestSyncProvider {
+    fn prometheus_metrics(&self, _: &mut prometheus::Registry) {}
 }
 
 impl SyncProvider for TestSyncProvider {

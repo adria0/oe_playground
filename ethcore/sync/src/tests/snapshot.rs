@@ -101,9 +101,6 @@ impl SnapshotService for TestSnapshotService {
         self.chunks.get(&hash).cloned()
     }
 
-    fn restoration_status(&self) -> RestorationStatus {
-        self.status.lock().clone()
-    }
     fn creation_status(&self) -> CreationStatus {
         CreationStatus::Inactive
     }
@@ -126,10 +123,6 @@ impl SnapshotService for TestSnapshotService {
             },
             None => RestorationStatus::Inactive,
         }
-    }
-
-    fn creation_status(&self) -> CreationStatus {
-        CreationStatus::Inactive
     }
 
     fn begin_restore(&self, manifest: ManifestData) {
