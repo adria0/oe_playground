@@ -39,13 +39,10 @@ use crate::{
     user_defaults::UserDefaults,
 };
 use ansi_term::Colour;
-use bytes::Bytes;
-use call_contract::CallContract;
+
 use dir::{DatabaseDirectories, Directories};
 use ethcore::{
-    client::{
-        BlockChainClient, BlockId, BlockInfo, Client, DatabaseCompactionProfile, Mode, VMType,
-    },
+    client::{BlockChainClient, BlockInfo, Client, DatabaseCompactionProfile, Mode, VMType},
     miner::{self, stratum, Miner, MinerOptions, MinerService},
     snapshot::{self, SnapshotConfiguration},
     verification::queue::VerifierSettings,
@@ -53,9 +50,7 @@ use ethcore::{
 use ethcore_logger::{Config as LogConfig, RotatingLogger};
 use ethcore_private_tx::{EncryptorConfig, ProviderConfig, SecretStoreEncryptor};
 use ethcore_service::ClientService;
-use ethereum_types::Address;
-use futures::IntoFuture;
-use hash_fetch::{self, fetch};
+
 use journaldb::Algorithm;
 use jsonrpc_core;
 use node_filter::NodeFilter;
@@ -65,9 +60,7 @@ use parity_rpc::{
 };
 use parity_runtime::Runtime;
 use parity_version::version;
-use registrar::{Asynchronous, RegistrarClient};
 use sync::{self, PrivateTxHandler, SyncConfig};
-use updater::{UpdatePolicy, Updater};
 
 // how often to take periodic snapshots.
 const SNAPSHOT_PERIOD: u64 = 5000;
@@ -102,7 +95,6 @@ pub struct RunCmd {
     pub acc_conf: AccountsConfig,
     pub gas_pricer_conf: GasPricerConfig,
     pub miner_extras: MinerExtras,
-    pub update_policy: UpdatePolicy,
     pub mode: Option<Mode>,
     pub tracing: Switch,
     pub fat_db: Switch,
@@ -155,22 +147,8 @@ impl ::local_store::NodeInfo for FullNodeInfo {
 
 /// Executes the given run command.
 ///
-/// `on_client_rq` is the action to perform when the client receives an RPC request to be restarted
-/// with a different chain.
-///
-/// `on_updater_rq` is the action to perform when the updater has a new binary to execute.
-///
 /// On error, returns what to print on stderr.
-pub fn execute<Cr, Rr>(
-    cmd: RunCmd,
-    logger: Arc<RotatingLogger>,
-    on_client_rq: Cr,
-    on_updater_rq: Rr,
-) -> Result<RunningClient, String>
-where
-    Cr: Fn(String) + 'static + Send,
-    Rr: Fn() + 'static + Send,
-{
+pub fn execute(cmd: RunCmd, logger: Arc<RotatingLogger>) -> Result<RunningClient, String> {
     // load spec
     let spec = cmd.spec.spec(&cmd.dirs.cache)?;
 
@@ -206,9 +184,6 @@ where
         Mode::Dark(_) | Mode::Off => false,
         _ => true,
     };
-
-    // get the update policy
-    let update_policy = cmd.update_policy;
 
     // prepare client and snapshot paths.
     let client_path = db_dirs.client_path(algorithm);
@@ -524,41 +499,6 @@ where
         chain_notify.start();
     }
 
-    let contract_client = {
-        struct FullRegistrar {
-            client: Arc<Client>,
-        }
-        impl RegistrarClient for FullRegistrar {
-            type Call = Asynchronous;
-            fn registrar_address(&self) -> Result<Address, String> {
-                self.client
-                    .registrar_address()
-                    .ok_or_else(|| "Registrar not defined.".into())
-            }
-            fn call_contract(&self, address: Address, data: Bytes) -> Self::Call {
-                Box::new(
-                    self.client
-                        .call_contract(BlockId::Latest, address, data)
-                        .into_future(),
-                )
-            }
-        }
-
-        Arc::new(FullRegistrar {
-            client: client.clone(),
-        })
-    };
-
-    // the updater service
-    let updater_fetch = fetch.clone();
-    let updater = Updater::new(
-        &Arc::downgrade(&(service.client() as Arc<dyn BlockChainClient>)),
-        &Arc::downgrade(&sync_provider),
-        update_policy,
-        hash_fetch::Client::with_fetch(contract_client.clone(), updater_fetch, runtime.executor()),
-    );
-    service.add_notify(updater.clone());
-
     // set up dependencies for rpc servers
     let rpc_stats = Arc::new(informant::RpcStats::default());
     let secret_store = account_provider.clone();
@@ -576,7 +516,6 @@ where
         logger: logger.clone(),
         settings: Arc::new(cmd.net_settings.clone()),
         net_service: manage_network.clone(),
-        updater: updater.clone(),
         experimental_rpcs: cmd.experimental_rpcs,
         ws_address: cmd.ws_conf.address(),
         fetch: fetch.clone(),
@@ -677,9 +616,6 @@ where
         }
     };
 
-    client.set_exit_handler(on_client_rq);
-    updater.set_exit_handler(on_updater_rq);
-
     Ok(RunningClient {
         inner: RunningClientInner::Full {
             rpc: rpc_direct,
@@ -688,7 +624,6 @@ where
             client_service: Arc::new(service),
             keep_alive: Box::new((
                 watcher,
-                updater,
                 ws_server,
                 http_server,
                 ipc_server,
