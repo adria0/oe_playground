@@ -374,13 +374,7 @@ impl PrometheusMetrics for EthSync {
             "Highest block number in the download queue",
             sync_status.highest_block_number.unwrap_or(0) as i64,
         );
-        /*
-        prometheus_gauge(
-            r,
-            "sync_is_majorsync",
-            "Are we in the middle of a major sync?",
-            scalar(self.is_major_syncing()),
-        );*/
+
         prometheus_gauge(
             r,
             "sync_mem_used",

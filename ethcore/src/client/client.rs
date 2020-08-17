@@ -3248,56 +3248,6 @@ impl PrometheusMetrics for Client {
             blockchain_cache_info.total() as i64,
         );
 
-        // io
-        /*
-        let io_stats = self
-            .db
-            .read()
-            .key_value()
-            .io_stats(kvdb::IoStatsKind::Overall);
-        prometheus_counter(
-            r,
-            "io_transactions",
-            "Number of transactions",
-            io_stats.transactions as i64,
-        );
-        prometheus_counter(
-            r,
-            "io_reads",
-            "Number of read operations",
-            io_stats.reads as i64,
-        );
-        prometheus_counter(
-            r,
-            "io_writes",
-            "Number of write operations",
-            io_stats.writes as i64,
-        );
-        prometheus_counter(
-            r,
-            "io_cache_reads",
-            "Number of reads resulted in a read from cache",
-            io_stats.cache_reads as i64,
-        );
-        prometheus_counter(
-            r,
-            "io_bytes_read",
-            "Number of bytes read",
-            io_stats.bytes_read as i64,
-        );
-        prometheus_counter(
-            r,
-            "io_cache_read_bytes",
-            "Number of cache bytes read",
-            io_stats.cache_read_bytes as i64,
-        );
-        prometheus_counter(
-            r,
-            "io_bytes_written",
-            "Number of bytes written",
-            io_stats.bytes_written as i64,
-        );*/
-
         // chain info
         let chain = self.chain_info();
 
