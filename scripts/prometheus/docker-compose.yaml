@@ -12,7 +12,7 @@ services:
     links:
       - prometheus
 
-    entrypoint: ["/home/openethereum/openethereum","--metrics","--metrics-interface=all"]
+    entrypoint: ["/home/parity/parity","--metrics","--metrics-interface=all"]
 
   prometheus:
     image: prom/prometheus
