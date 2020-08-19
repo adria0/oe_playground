@@ -60,11 +60,11 @@ EVM implementation for Parity.
   Copyright 2015-2019 Parity Technologies (UK) Ltd.
 
 Usage:
-    parity-evm state-test <file> [--json --std-json --std-dump-json --only NAME --chain CHAIN --std-out-only --std-err-only]
-    parity-evm stats [options]
-    parity-evm stats-jsontests-vm <file>
-    parity-evm [options]
-    parity-evm [-h | --help]
+    openethereum-evm state-test <file> [--json --std-json --std-dump-json --only NAME --chain CHAIN --std-out-only --std-err-only]
+    openethereum-evm stats [options]
+    openethereum-evm stats-jsontests-vm <file>
+    openethereum-evm [options]
+    openethereum-evm [-h | --help]
 
 Commands:
     state-test         Run a state test from a json file.
@@ -415,7 +415,7 @@ mod tests {
     #[test]
     fn should_parse_all_the_options() {
         let args = run(&[
-            "parity-evm",
+            "openethereum-evm",
             "--json",
             "--std-json",
             "--std-dump-json",
@@ -454,7 +454,7 @@ mod tests {
     #[test]
     fn should_parse_state_test_command() {
         let args = run(&[
-            "parity-evm",
+            "openethereum-evm",
             "state-test",
             "./file.json",
             "--chain",

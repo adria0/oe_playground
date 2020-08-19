@@ -47,7 +47,7 @@ use trace::{NoopTracer, NoopVMTracer};
 use tx_filter::TransactionFilter;
 
 /// Open tries to round block.gas_limit to multiple of this constant
-pub const PARITY_GAS_LIMIT_DETERMINANT: U256 = U256([37, 0, 0, 0]);
+pub const GAS_LIMIT_DETERMINANT: U256 = U256([37, 0, 0, 0]);
 
 /// Ethash-specific extensions.
 #[derive(Debug, Clone)]
@@ -515,12 +515,12 @@ impl super::Machine for EthereumMachine {
 
 // Try to round gas_limit a bit so that:
 // 1) it will still be in desired range
-// 2) it will be a nearest (with tendency to increase) multiple of PARITY_GAS_LIMIT_DETERMINANT
+// 2) it will be a nearest (with tendency to increase) multiple of GAS_LIMIT_DETERMINANT
 fn round_block_gas_limit(gas_limit: U256, lower_limit: U256, upper_limit: U256) -> U256 {
     let increased_gas_limit =
-        gas_limit + (PARITY_GAS_LIMIT_DETERMINANT - gas_limit % PARITY_GAS_LIMIT_DETERMINANT);
+        gas_limit + (GAS_LIMIT_DETERMINANT - gas_limit % GAS_LIMIT_DETERMINANT);
     if increased_gas_limit > upper_limit {
-        let decreased_gas_limit = increased_gas_limit - PARITY_GAS_LIMIT_DETERMINANT;
+        let decreased_gas_limit = increased_gas_limit - GAS_LIMIT_DETERMINANT;
         if decreased_gas_limit < lower_limit {
             gas_limit
         } else {

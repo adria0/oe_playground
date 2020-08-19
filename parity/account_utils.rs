@@ -313,7 +313,7 @@ mod accounts {
 
     // Construct an error `String` with an adaptive hint on how to create an account.
     fn build_create_account_hint(spec: &SpecType, keys: &str) -> String {
-        format!("You can create an account via RPC, UI or `parity account new --chain {} --keys-path {}`.", spec, keys)
+        format!("You can create an account via RPC, UI or `openethereum account new --chain {} --keys-path {}`.", spec, keys)
     }
 }
 

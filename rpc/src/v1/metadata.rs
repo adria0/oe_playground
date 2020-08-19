@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Open Ethereum.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Parity RPC requests Metadata.
+//! Open Ethereum RPC requests Metadata.
 use std::sync::Arc;
 
 use jsonrpc_core;
