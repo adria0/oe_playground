@@ -152,7 +152,8 @@ impl ClientCapabilities for ClientVersion {
 }
 
 fn is_parity(client_id: &str) -> bool {
-    client_id.starts_with(LEGACY_CLIENT_ID_PREFIX) || client_id.starts_with(CURRENT_CLIENT_ID_PREFIX)
+    client_id.starts_with(LEGACY_CLIENT_ID_PREFIX)
+        || client_id.starts_with(CURRENT_CLIENT_ID_PREFIX)
 }
 
 /// Parse known parity formats. Recognizes either a short format with four fields
@@ -265,7 +266,10 @@ pub mod tests {
     fn make_default_version_string() -> String {
         format!(
             "{}/v{}/{}/{}",
-            CURRENT_CLIENT_ID_PREFIX, PARITY_CLIENT_SEMVER, PARITY_CLIENT_OS, PARITY_CLIENT_COMPILER
+            CURRENT_CLIENT_ID_PREFIX,
+            PARITY_CLIENT_SEMVER,
+            PARITY_CLIENT_OS,
+            PARITY_CLIENT_COMPILER
         )
     }
 
@@ -406,7 +410,10 @@ pub mod tests {
         // This is invalid because version has no leading 'v'
         let client_version_string = format!(
             "{}/{}/{}/{}",
-            CURRENT_CLIENT_ID_PREFIX, PARITY_CLIENT_SEMVER, PARITY_CLIENT_OS, PARITY_CLIENT_COMPILER
+            CURRENT_CLIENT_ID_PREFIX,
+            PARITY_CLIENT_SEMVER,
+            PARITY_CLIENT_OS,
+            PARITY_CLIENT_COMPILER
         );
 
         let client_version = ClientVersion::from(client_version_string.as_str());
@@ -436,7 +443,10 @@ pub mod tests {
     ) {
         let client_version_string = format!(
             "{}/{}/v{}/{}",
-            CURRENT_CLIENT_ID_PREFIX, PARITY_CLIENT_IDENTITY, PARITY_CLIENT_SEMVER, PARITY_CLIENT_OS,
+            CURRENT_CLIENT_ID_PREFIX,
+            PARITY_CLIENT_IDENTITY,
+            PARITY_CLIENT_SEMVER,
+            PARITY_CLIENT_OS,
         );
 
         let client_version = ClientVersion::from(client_version_string.as_str());

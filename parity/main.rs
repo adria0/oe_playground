@@ -26,7 +26,7 @@ extern crate log;
 extern crate ansi_term;
 extern crate panic_hook;
 extern crate parity_daemonize;
-extern crate parity_ethereum;
+extern crate openethereum;
 extern crate parking_lot;
 
 extern crate ethcore_logger;
@@ -47,7 +47,7 @@ use ctrlc::CtrlC;
 use ethcore_logger::setup_log;
 use fdlimit::raise_fd_limit;
 use parity_daemonize::AsHandle;
-use parity_ethereum::{start, ExecutionAction};
+use openethereum::{start, ExecutionAction};
 use parking_lot::{Condvar, Mutex};
 
 #[derive(Debug)]
@@ -62,7 +62,7 @@ struct ExitStatus {
 fn main() -> Result<(), i32> {
     let conf = {
         let args = std::env::args().collect::<Vec<_>>();
-        parity_ethereum::Configuration::parse_cli(&args).unwrap_or_else(|e| e.exit())
+        openethereum::Configuration::parse_cli(&args).unwrap_or_else(|e| e.exit())
     };
 
     let logger = setup_log(&conf.logger_config()).unwrap_or_else(|e| {

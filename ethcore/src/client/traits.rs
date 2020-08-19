@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Open Ethereum.  If not, see <http://www.gnu.org/licenses/>.
 
+//! Traits implemented by client.
+
 use std::{collections::BTreeMap, sync::Arc};
 
 use blockchain::{BlockReceipts, TreeRoute};

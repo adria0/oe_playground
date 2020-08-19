@@ -18,7 +18,6 @@
 
 //! Ethcore library
 
-
 extern crate ansi_term;
 extern crate byteorder;
 extern crate common_types as types;

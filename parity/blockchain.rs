@@ -305,7 +305,9 @@ fn start_client(
     // check if fatdb is on
     let fat_db = fatdb_switch_to_bool(fat_db, &user_defaults, algorithm)?;
     if !fat_db && require_fat_db {
-        return Err("This command requires Open Ethereum to be synced with --fat-db on.".to_owned());
+        return Err(
+            "This command requires Open Ethereum to be synced with --fat-db on.".to_owned(),
+        );
     }
 
     // prepare client and snapshot paths.

@@ -1607,7 +1607,13 @@ mod tests {
         // given
 
         // when
-        let conf = parse(&["openethereum", "--chain", "goerli", "--identity", "testname"]);
+        let conf = parse(&[
+            "openethereum",
+            "--chain",
+            "goerli",
+            "--identity",
+            "testname",
+        ]);
 
         // then
         assert_eq!(
@@ -1663,7 +1669,11 @@ mod tests {
             .unwrap()
             .write_all(b"  \n\t\n")
             .unwrap();
-        let args = vec!["openethereum", "--reserved-peers", filename.to_str().unwrap()];
+        let args = vec![
+            "openethereum",
+            "--reserved-peers",
+            filename.to_str().unwrap(),
+        ];
         let conf = Configuration::parse_cli(&args).unwrap();
         assert!(conf.init_reserved_nodes().is_ok());
     }
@@ -1673,7 +1683,11 @@ mod tests {
         let tempdir = TempDir::new("").unwrap();
         let filename = tempdir.path().join("peers_comments");
         File::create(&filename).unwrap().write_all(b"# Sample comment\nenode://6f8a80d14311c39f35f516fa664deaaaa13e85b2f7493f37f6144d86991ec012937307647bd3b9a82abe2974e1407241d54947bbb39763a4cac9f77166ad92a0@172.0.0.1:30303\n").unwrap();
-        let args = vec!["openethereum", "--reserved-peers", filename.to_str().unwrap()];
+        let args = vec![
+            "openethereum",
+            "--reserved-peers",
+            filename.to_str().unwrap(),
+        ];
         let conf = Configuration::parse_cli(&args).unwrap();
         let reserved_nodes = conf.init_reserved_nodes();
         assert!(reserved_nodes.is_ok());
@@ -1804,7 +1818,13 @@ mod tests {
 
         // when
         let conf0 = parse(&["openethereum", "--ports-shift", "1", "--stratum"]);
-        let conf1 = parse(&["openethereum", "--ports-shift", "1", "--jsonrpc-port", "8544"]);
+        let conf1 = parse(&[
+            "openethereum",
+            "--ports-shift",
+            "1",
+            "--jsonrpc-port",
+            "8544",
+        ]);
 
         // then
         assert_eq!(conf0.net_addresses().unwrap().0.port(), 30304);
@@ -1849,7 +1869,11 @@ mod tests {
         assert_eq!(conf.net_addresses().unwrap().1.unwrap().port(), 30303);
 
         // Hostname works, garbage at the end is discarded
-        let conf = parse(&["openethereum", "--nat", "extip:ethereum.org:whatever bla bla 123"]);
+        let conf = parse(&[
+            "openethereum",
+            "--nat",
+            "extip:ethereum.org:whatever bla bla 123",
+        ]);
         assert!(conf.net_addresses().unwrap().1.is_some());
         assert_eq!(conf.net_addresses().unwrap().1.unwrap().port(), 30303);
 
@@ -1884,7 +1908,11 @@ mod tests {
         let all = parse(&["openethereum", "--allow-ips", "all"]);
         let private = parse(&["openethereum", "--allow-ips", "private"]);
         let block_custom = parse(&["openethereum", "--allow-ips", "-10.0.0.0/8"]);
-        let combo = parse(&["openethereum", "--allow-ips", "public 10.0.0.0/8 -1.0.0.0/8"]);
+        let combo = parse(&[
+            "openethereum",
+            "--allow-ips",
+            "public 10.0.0.0/8 -1.0.0.0/8",
+        ]);
         let ipv6_custom_public = parse(&["openethereum", "--allow-ips", "public fc00::/7"]);
         let ipv6_custom_private = parse(&["openethereum", "--allow-ips", "private -fc00::/7"]);
 
