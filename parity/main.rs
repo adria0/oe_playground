@@ -24,9 +24,9 @@ extern crate fdlimit;
 #[macro_use]
 extern crate log;
 extern crate ansi_term;
+extern crate openethereum;
 extern crate panic_hook;
 extern crate parity_daemonize;
-extern crate openethereum;
 extern crate parking_lot;
 
 extern crate ethcore_logger;
@@ -46,8 +46,8 @@ use ansi_term::Colour;
 use ctrlc::CtrlC;
 use ethcore_logger::setup_log;
 use fdlimit::raise_fd_limit;
-use parity_daemonize::AsHandle;
 use openethereum::{start, ExecutionAction};
+use parity_daemonize::AsHandle;
 use parking_lot::{Condvar, Mutex};
 
 #[derive(Debug)]

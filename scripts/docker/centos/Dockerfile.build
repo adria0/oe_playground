@@ -19,7 +19,7 @@ RUN yum -y update && \
     cmake --version && \
     cd openethereum && \
     cargo build --verbose --release --features final && \
-    strip /build/openethereum/target/release/parity && \
-    file /build/openethereum/target/release/parity
+    strip /build/openethereum/target/release/openethereum && \
+    file /build/openethereum/target/release/openethereum
 
 

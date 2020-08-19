@@ -1398,7 +1398,7 @@ mod tests {
                 arg_price_update_period: "hourly".into(),
                 arg_gas_floor_target: "8000000".into(),
                 arg_gas_cap: "10000000".into(),
-                arg_extra_data: Some("openethereum".into()),
+                arg_extra_data: Some("Parity".into()),
                 flag_tx_queue_no_unfamiliar_locals: false,
                 flag_tx_queue_no_early_reject: false,
                 arg_tx_queue_size: 8192usize,
@@ -1453,7 +1453,7 @@ mod tests {
                 // -- Miscellaneous Options
                 flag_version: false,
                 arg_logging: Some("own_tx=trace".into()),
-                arg_log_file: Some("/var/log/parity.log".into()),
+                arg_log_file: Some("/var/log/openethereum.log".into()),
                 flag_no_color: false,
                 flag_no_config: false,
             }
@@ -1635,7 +1635,7 @@ mod tests {
                 }),
                 misc: Some(Misc {
                     logging: Some("own_tx=trace".into()),
-                    log_file: Some("/var/log/parity.log".into()),
+                    log_file: Some("/var/log/openethereum.log".into()),
                     color: Some(true),
                     ports_shift: Some(0),
                     unsafe_expose: Some(false),

@@ -120,7 +120,7 @@ impl Configuration {
     /// # Example
     ///
     /// ```
-    /// let _cfg = parity_ethereum::Configuration::parse_cli(&["--light", "--chain", "kovan"]).unwrap();
+    /// let _cfg = openethereum::Configuration::parse_cli(&["--light", "--chain", "kovan"]).unwrap();
     /// ```
     pub fn parse_cli<S: AsRef<str>>(command: &[S]) -> Result<Self, ArgsError> {
         let config = Configuration {
@@ -1806,7 +1806,7 @@ mod tests {
                 assert!(c
                     .net_conf
                     .client_version
-                    .starts_with("Parity-Ethereum/Somebody/"));
+                    .starts_with("OpenEthereum/Somebody/"));
             }
             _ => panic!("Should be Cmd::Run"),
         }

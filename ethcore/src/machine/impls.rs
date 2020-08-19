@@ -587,7 +587,7 @@ mod tests {
         header.set_number(1);
 
         // this test will work for this constant only
-        assert_eq!(PARITY_GAS_LIMIT_DETERMINANT, U256::from(37));
+        assert_eq!(GAS_LIMIT_DETERMINANT, U256::from(37));
 
         // when parent.gas_limit < gas_floor_target:
         parent.set_gas_limit(U256::from(50_000));

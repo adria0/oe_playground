@@ -403,6 +403,7 @@ impl TestBlockChainClient {
     }
 }
 
+/// Get temporary db state1
 pub fn get_temp_state_db() -> StateDB {
     let db = kvdb_memorydb::create(NUM_COLUMNS.unwrap_or(0));
     let journal_db = journaldb::new(Arc::new(db), journaldb::Algorithm::EarlyMerge, COL_STATE);
