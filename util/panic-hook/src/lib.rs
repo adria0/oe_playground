@@ -1,18 +1,18 @@
 // Copyright 2015-2020 Parity Technologies (UK) Ltd.
-// This file is part of Open Ethereum.
+// This file is part of OpenEthereum.
 
-// Open Ethereum is free software: you can redistribute it and/or modify
+// OpenEthereum is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Open Ethereum is distributed in the hope that it will be useful,
+// OpenEthereum is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Open Ethereum.  If not, see <http://www.gnu.org/licenses/>.
+// along with OpenEthereum.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Custom panic hook with bug report link
 
@@ -34,7 +34,7 @@ pub fn set_abort() {
 
 /// Set the panic hook with a closure to be called. The closure receives the panic message.
 ///
-/// Depending on how Open Ethereum was compiled, after the closure has been executed, either the process
+/// Depending on how OpenEthereum was compiled, after the closure has been executed, either the process
 /// aborts or unwinding starts.
 ///
 /// If you panic within the closure, a double panic happens and the process will stop.

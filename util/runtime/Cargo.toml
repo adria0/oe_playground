@@ -1,5 +1,5 @@
 [package]
-description = "Open Ethereum Runtime"
+description = "OpenEthereum Runtime"
 homepage = "https://github.com/openethereum/openethereum"
 license = "GPL-3.0"
 name = "parity-runtime"

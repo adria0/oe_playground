@@ -1,5 +1,5 @@
 [Unit]
-Description=Open Ethereum Daemon
+Description=OpenEthereum Daemon
 After=network.target
 
 [Service]

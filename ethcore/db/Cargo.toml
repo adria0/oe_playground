@@ -1,5 +1,5 @@
 [package]
-description = "Open Ethereum DB access utilities"
+description = "OpenEthereum DB access utilities"
 homepage = "https://github.com/openethereum/openethereum"
 license = "GPL-3.0"
 name = "ethcore-db"

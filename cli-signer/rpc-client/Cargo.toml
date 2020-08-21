@@ -1,5 +1,5 @@
 [package]
-description = "Open Ethereum RPC Client"
+description = "OpenEthereum RPC Client"
 homepage = "https://github.com/openethereum/openethereum"
 license = "GPL-3.0"
 name = "parity-rpc-client"

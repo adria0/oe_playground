@@ -1,5 +1,5 @@
 [package]
-description = "Open Ethereum Miner Interface."
+description = "OpenEthereum Miner Interface."
 name = "ethcore-miner"
 homepage = "https://github.com/openethereum/openethereum"
 license = "GPL-3.0"

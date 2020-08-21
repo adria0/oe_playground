@@ -1,11 +1,11 @@
 ## evmbin
 
-EVM implementation for Open Ethereum.
+EVM implementation for OpenEthereum.
 
 ### Usage
 
 ```
-EVM implementation for Open Ethereum.
+EVM implementation for OpenEthereum.
   Copyright 2015-2020 Parity Technologies (UK) Ltd.
 
 Usage:
