@@ -11,13 +11,10 @@ RUN apk add --no-cache \
   linux-headers \
   perl \
   rust \
-  git \
-  clang-dev \
-  llvm-dev
+  git
 
 WORKDIR /openethereum
 COPY . /openethereum
-ENV C=clang CXX=clang++
 RUN cargo build --release --features final --target x86_64-alpine-linux-musl --verbose
 RUN strip target/x86_64-alpine-linux-musl/release/openethereum
 
