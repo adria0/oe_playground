@@ -28,9 +28,6 @@ use sync::SyncProvider;
 pub enum NodeSecretKey {
     /// Stored as plain text in configuration file.
     Plain(Secret),
-    /// Stored as account in key store.
-    #[cfg(feature = "accounts")]
-    KeyStore(Address),
 }
 
 /// Secret store service contract address.
@@ -155,48 +152,6 @@ mod server {
                             KeyPair::from_secret(secret)
                                 .map_err(|e| format!("invalid secret: {}", e))?,
                         ))
-                    }
-                    #[cfg(feature = "accounts")]
-                    Some(NodeSecretKey::KeyStore(account)) => {
-                        // Check if account exists
-                        if !deps.account_provider.has_account(account.clone()) {
-                            return Err(format!(
-                                "Account {} passed as secret store node key is not found",
-                                account
-                            ));
-                        }
-
-                        // Check if any passwords have been read from the password file(s)
-                        if deps.accounts_passwords.is_empty() {
-                            return Err(format!(
-                                "No password found for the secret store node account {}",
-                                account
-                            ));
-                        }
-
-                        // Attempt to sign in the engine signer.
-                        let password = deps
-                            .accounts_passwords
-                            .iter()
-                            .find(|p| {
-                                deps.account_provider
-                                    .sign(account.clone(), (*p).clone(), Default::default())
-                                    .is_ok()
-                            })
-                            .ok_or_else(|| {
-                                format!(
-                                    "No valid password for the secret store node account {}",
-                                    account
-                                )
-                            })?;
-                        Arc::new(
-                            ethcore_secretstore::KeyStoreNodeKeyPair::new(
-                                deps.account_provider,
-                                account,
-                                password.clone(),
-                            )
-                            .map_err(|e| format!("{}", e))?,
-                        )
                     }
                     None => return Err("self secret is required when using secretstore".into()),
                 };
